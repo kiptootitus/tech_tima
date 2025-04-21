@@ -1,0 +1,7 @@
+
+.env.nginx
+
+# Add the environments you mentioned
+.env.production
+.env.staging
+.env
