@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    image: tima_backend
+    container_name: tima_backend
+    build:
+      context: ./images/tima_backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+      - ./images/tima_backend:/home/app/web  # Source code mount for live reload
+    networks:
+      - default
+      - internal_local_network
+
+  tima_frontend:
+    image: tima_frontend
+    container_name: tima_frontend
+    build:
+      context: ./images/tima_frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+#    volumes:
+#      #- ./images/tima_frontend:/app  # Mount source for hot reload (Next.js dev mode)
+    networks:
+      - default
+      - internal_local_network
+
+volumes:
+  static_volume:
+  media_volume:
+
+networks:
+  internal_local_network:
+    driver: bridge

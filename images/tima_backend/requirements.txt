@@ -1,0 +1,11 @@
+djangorestframework
+six
+django-cors-headers
+django-environ
+psycopg2
+django-filter
+django-extensions
+django-redis
+django-storages
+boto3
+django-axes

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.db
+.env.*
+*.sqlite3
+*.log
+*.egg-info
+node_modules/
+static/
+media/

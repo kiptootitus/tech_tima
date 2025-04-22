@@ -5,3 +5,8 @@
 .env.production
 .env.staging
 .env
+# Ignore Nginx keys
+*.key
+*.crt
+images/nginx/nginx-certs/key.pem
+images/nginx/nginx-certs/cert.pem
