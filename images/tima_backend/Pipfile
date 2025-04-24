@@ -4,18 +4,24 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-djangorestframework = "*"
+django = "<5.0,>=4.2"
+djangorestframework = ">=3.14.0"
 six = "*"
 django-cors-headers = "*"
 django-environ = "*"
 psycopg2 = "*"
-django-filter = "*"
+django-filter = ">=23.3"
 django-extensions = "*"
 django-redis = "*"
 django-storages = "*"
 boto3 = "*"
 django-axes = "*"
+djangorestframework-simplejwt = ">=5.3.0"
+pillow = ">=10.0.0"
+coverage = ">=7.2.0"
+pytest = ">=7.4.0"
+pytest-django = ">=4.5.2"
+python-dotenv = ">=1.0.0"
 
 [dev-packages]
 
