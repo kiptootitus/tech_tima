@@ -16,9 +16,9 @@ export default function LoginPage() {
     if (!username || !password) return alert('All fields are required.');
 
     try {
-      const res = await api.post('/login/', { username, password });
+      const res = await api.post('auth/token/', { username, password });
       localStorage.setItem('token', res.data.token);
-      router.push('/profile');
+      router.push('/');
     } catch (err) {
       alert('Login failed');
     }

@@ -24,7 +24,7 @@ export default function ProfilePage() {
 
   async function handleSave() {
     try {
-      const res = await api.put('/profile/', formData); // Make sure this is allowed in your Django backend
+      const res = await api.put('/profiles/<int:pk>/', formData); // Make sure this is allowed in your Django backend
       setUser(res.data);
       setEditing(false);
       alert('Profile updated!');

@@ -11,7 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    api.get('/profile/')
+    api.get('/profiles/<int:pk>/')
       .then(res => setUser(res.data))
       .catch(() => setUser(null));
   }, []);
