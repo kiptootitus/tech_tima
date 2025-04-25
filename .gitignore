@@ -10,3 +10,13 @@
 *.crt
 images/nginx/nginx-certs/key.pem
 images/nginx/nginx-certs/cert.pem
+tech_tima.pem
+NarutoDev_accessKeys.csv
+garage-tf/main.tf
+garage-tf/outputs.tf
+garage-tf/terraform.tfstate
+garage-tf/variables.tf
+garage-tf/terraform.tfstate.backup
+garage-tf/.terraform.lock.hcl
+garage-tf/.terraform/providers/registry.terraform.io/hashicorp/aws/5.96.0/linux_amd64/LICENSE.txt
+garage-tf/.terraform/providers/registry.terraform.io/hashicorp/aws/5.96.0/linux_amd64/terraform-provider-aws_v5.96.0_x5
