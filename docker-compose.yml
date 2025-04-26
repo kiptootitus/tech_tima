@@ -48,7 +48,7 @@ services:
     build:
       context: ./images/tima_frontend
       dockerfile: Dockerfile
-      target: local
+      target: production
     container_name: tima_frontend
     image: tima_frontend
     env_file:
