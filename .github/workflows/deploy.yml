@@ -1,4 +1,4 @@
-name: Deployement to EC2 AWS
+name: Deployment to EC2 AWS
 
 on:
   push:
@@ -17,17 +17,17 @@ jobs:
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: ${{ secrets.EC2_USER }}   # (should be 'ubuntu' now in your GitHub Secrets)
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # If the repo is not cloned yet, clone it, else pull latest
-            if [ ! -d "/home/ec2-user/tech_tima" ]; then
-              git clone https://github.com/kiptootitus/tech_tima.git /home/ec2-user/tech_tima
+            if [ ! -d "/home/ubuntu/tech_tima" ]; then
+              git clone https://github.com/kiptootitus/tech_tima.git /home/ubuntu/tech_tima
             else
-              cd /home/ec2-user/tech_tima
+              cd /home/ubuntu/tech_tima
               git pull origin main
             fi
 
-            cd /home/ec2-user/tech_tima
-            docker-compose down || true
-            docker-compose --env-file .env up --build -d
+            cd /home/ubuntu/tech_tima
+            docker compose down || true
+            docker compose --env-file .env up --build -d
