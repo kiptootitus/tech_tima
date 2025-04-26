@@ -1,10 +1,11 @@
 # ========================
-# Stage 1: Local Dev (Hot reload)
+# Single Dockerfile for Local or Production
 # ========================
-FROM node:20-slim AS local
+FROM node:20-slim
 
-ENV ENVIRONMENT=local
-ENV NODE_ENV=development
+# If you want to build for local dev, you control it with ENV vars (docker-compose env)
+ARG ENVIRONMENT=local
+ENV NODE_ENV=${ENVIRONMENT}
 
 WORKDIR /home/app/web
 
@@ -16,33 +17,11 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+# Hot reload tweak
 ENV CHOKIDAR_USEPOLLING=true
 
+# Expose Next.js port
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000 || exit 1
-
-CMD ["yarn", "dev"]
-
-# ========================
-# Stage 2: Production Build (Static Export)
-# ========================
-FROM node:20-slim AS build
-
-ENV ENVIRONMENT=production
-ENV NODE_ENV=production
-
-WORKDIR /home/app/web
-
-RUN corepack enable
-RUN corepack prepare yarn@4.9.1 --activate
-
-COPY package.json yarn.lock .dockerignore ./
-RUN yarn install --frozen-lockfile
-
-COPY . .
-
-RUN yarn build && yarn export
-
-EXPOSE 3000
+# 🔥 Define startup logic depending on ENVIRONMENT
+CMD if [ "$NODE_ENV" = "production" ]; then yarn build && yarn export && yarn start; else yarn dev; fi
