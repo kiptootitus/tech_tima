@@ -44,7 +44,7 @@ COPY --from=builder /home/app/web/tailwind.config.ts ./tailwind.config.ts
 COPY --from=builder /home/app/web/tsconfig.json ./tsconfig.json
 
 # Install production dependencies
-RUN yarn workspaces focus --production --immutable
+RUN yarn workspaces focus --production
 # Expose app port
 EXPOSE 3000
 
