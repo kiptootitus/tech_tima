@@ -17,17 +17,29 @@ jobs:
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}   # (should be 'ubuntu' now in your GitHub Secrets)
+          username: ${{ secrets.EC2_USER }}   # should be 'ubuntu' for your EC2
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # If the repo is not cloned yet, clone it, else pull latest
-            if [ ! -d "/mnt/data/tech_tima" ]; then
+            set -e
+
+            echo "🛠️ Deploying to EC2..."
+
+            # Clone or pull latest code
+            if [ ! -d "/mnt/data/tech_tima/.git" ]; then
+              echo "📥 Cloning repository..."
               git clone https://github.com/kiptootitus/tech_tima.git /mnt/data/tech_tima
             else
+              echo "🔄 Pulling latest changes..."
               cd /mnt/data/tech_tima
               git pull origin main
             fi
 
             cd /mnt/data/tech_tima
+
+            echo "🧹 Cleaning old containers..."
             docker-compose down || true
-            docker-compose --env-file .env up --build --no-cache  -d
+
+            echo "🚀 Building and starting containers (no cache)..."
+            docker-compose --env-file .env up --build --no-cache -d
+
+            echo "✅ Deployment completed!"
