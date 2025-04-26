@@ -1,4 +1,4 @@
-name: Deployment to EC2 AWS
+name: Deployment to EC2
 
 on:
   push:
