@@ -29,5 +29,5 @@ jobs:
             fi
 
             cd /home/ec2-user/tech_tima
-            docker compose down || true
-            docker compose --env-file .env up --build -d
+            docker-compose down || true
+            docker-compose --env-file .env up --build -d
