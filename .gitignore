@@ -25,3 +25,13 @@ garage-tf/.terraform/providers/registry.terraform.io/hashicorp/http/3.5.0/linux_
 garage-tf/.terraform/providers/registry.terraform.io/hashicorp/http/3.5.0/linux_amd64/terraform-provider-http_v3.5.0_x5
 garage-tf/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.2/linux_amd64/LICENSE.txt
 garage-tf/.terraform/providers/registry.terraform.io/hashicorp/random/3.7.2/linux_amd64/terraform-provider-random_v3.7.2_x5
+garage-tf/modules/ebs_volume/main.tf
+garage-tf/modules/ebs_volume/outputs.tf
+garage-tf/modules/ebs_volume/variables.tf
+garage-tf/modules/ec2_instance/main.tf
+garage-tf/modules/ec2_instance/outputs.tf
+garage-tf/modules/security_group/outputs.tf
+garage-tf/modules/security_group/main.tf
+garage-tf/modules/ec2_instance/variables.tf
+garage-tf/modules/security_group/variables.tf
+garage-tf/.terraform/modules/modules.json
