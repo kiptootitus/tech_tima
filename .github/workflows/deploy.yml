@@ -17,14 +17,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}   # should be 'ubuntu' for your EC2
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
 
             echo "🛠️ Deploying to EC2..."
 
-            # Clone or pull latest code
             if [ ! -d "/mnt/data/tech_tima/.git" ]; then
               echo "📥 Cloning repository..."
               git clone https://github.com/kiptootitus/tech_tima.git /mnt/data/tech_tima
@@ -39,7 +38,10 @@ jobs:
             echo "🧹 Cleaning old containers..."
             docker-compose down || true
 
-            echo "🚀 Building and starting containers (no cache)..."
-            docker-compose --env-file .env up --build --no-cache -d
+            echo "🛠️ Building new docker images with no cache..."
+            docker-compose --env-file .env build --no-cache
 
-            echo "✅ Deployment completed!"
+            echo "🚀 Starting containers..."
+            docker-compose --env-file .env up -d
+
+            echo "✅ Deployment completed successfully!"
