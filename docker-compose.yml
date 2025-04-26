@@ -48,7 +48,7 @@ services:
     build:
       context: ./images/tima_frontend
       dockerfile: Dockerfile
-      target: local # 👈 Switch between "local" and "production"
+      target: local
     container_name: tima_frontend
     image: tima_frontend
     env_file:
@@ -56,7 +56,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./images/tima_frontend:/home/app/web
+      - ./images/tima_frontend/public:/home/app/web/public
+      - ./images/tima_frontend/src:/home/app/web/src
+      - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
+      - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
+      - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json
       - /home/app/web/node_modules
       - /var/www/static:/var/www/static
       - /var/certbot/conf:/etc/letsencrypt/:ro
