@@ -3,7 +3,6 @@ FROM node:20 AS builder
 WORKDIR /home/app/web
 RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 COPY package.json yarn.lock ./
-COPY .yarnrc.yml .yarnrc.yml  # Include Yarn config if it exists
 RUN yarn config set nodeLinker node-modules
 RUN yarn install --frozen-lockfile
 COPY . .
