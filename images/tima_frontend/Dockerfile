@@ -5,7 +5,7 @@ RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 
 COPY package.json yarn.lock ./
 RUN yarn config set nodeLinker node-modules
-RUN yarn install --immutable --production
+RUN yarn install --immutable --mode=production
 
 COPY . .
 
@@ -24,7 +24,7 @@ COPY --from=builder /home/app/web/tailwind.config.ts ./tailwind.config.ts
 COPY --from=builder /home/app/web/tsconfig.json ./tsconfig.json
 COPY --from=builder /home/app/web/.next/ ./.next/
 
-RUN yarn install --immutable --production
+RUN yarn install --immutable --mode=production
 
 EXPOSE 3000
 ENV NODE_ENV=${ENVIRONMENT}
