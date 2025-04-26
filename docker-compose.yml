@@ -62,7 +62,6 @@ services:
       - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
       - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
       - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json
-      - /home/app/web/node_modules
       - /var/www/static:/var/www/static
       - /var/certbot/conf:/etc/letsencrypt/:ro
     depends_on:
