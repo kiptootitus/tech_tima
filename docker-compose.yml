@@ -1,46 +1,102 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  app:
-    image: tima_backend
-    container_name: tima_backend
+  database:
+    image: postgres:16.8-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./images/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+    networks:
+      - internal_local_network
+      - default
+
+  tima_backend:
     build:
       context: ./images/tima_backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+    container_name: tima_backend
+    image: tima_backend
+    depends_on:
+      - database
     env_file:
       - .env
-    stdin_open: true
-    tty: true
     volumes:
+      - ./images/tima_backend:/home/app/web
+      - /var/www/static:/var/www/static
+      - /var/certbot/conf:/etc/letsencrypt/:ro
       - static_volume:/home/app/web/static
       - media_volume:/home/app/web/media
-      - ./images/tima_backend:/home/app/web  # Source code mount for live reload
+    ports:
+      - "8000:8000"
+    environment:
+      - VIRTUAL_HOST=${API_VIRTUAL_HOST}
+      - VIRTUAL_PORT=${API_VIRTUAL_PORT}
+      - LETSENCRYPT_HOST=${API_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    stdin_open: true
+    tty: true
     networks:
-      - default
       - internal_local_network
+      - default
 
   tima_frontend:
-    image: tima_frontend
-    container_name: tima_frontend
     build:
       context: ./images/tima_frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+      target: local # 👈 Switch between "local" and "production"
+    container_name: tima_frontend
+    image: tima_frontend
     env_file:
       - .env
-#    volumes:
-#      #- ./images/tima_frontend:/app  # Mount source for hot reload (Next.js dev mode)
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./images/tima_frontend:/home/app/web
+      - /home/app/web/node_modules
+      - /var/www/static:/var/www/static
+      - /var/certbot/conf:/etc/letsencrypt/:ro
+    depends_on:
+      - tima_backend
+    environment:
+      - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
     networks:
-      - default
       - internal_local_network
+      - default
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:latest
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /etc/nginx/conf.d
+    networks:
+      - internal_local_network
+      - default
 
 volumes:
+  postgres_data:
   static_volume:
   media_volume:
+  certs:
+  vhost:
+  html:
+
 
 networks:
+  default:
   internal_local_network:
     driver: bridge
