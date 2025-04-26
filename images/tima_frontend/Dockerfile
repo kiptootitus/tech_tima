@@ -11,7 +11,7 @@ WORKDIR /home/app/web
 RUN corepack enable
 RUN corepack prepare yarn@4.9.1 --activate
 
-COPY package.json yarn.lock .dockerignore ./
+COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 COPY . .
