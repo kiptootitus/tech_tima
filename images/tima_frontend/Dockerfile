@@ -44,8 +44,7 @@ COPY --from=builder /home/app/web/tailwind.config.ts ./tailwind.config.ts
 COPY --from=builder /home/app/web/tsconfig.json ./tsconfig.json
 
 # Install production dependencies
-RUN yarn install --frozen-lockfile --production
-
+RUN yarn workspaces focus --production --immutable
 # Expose app port
 EXPOSE 3000
 
