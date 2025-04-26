@@ -1,47 +1,46 @@
-name: Deployment to EC2
+# name: Deployment to EC2
+# on:
+#   push:
+#     branches:
+#       - main
 
-on:
-  push:
-    branches:
-      - main
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+#       - name: SSH and Deploy to EC2
+#         uses: appleboy/ssh-action@v0.1.6
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ${{ secrets.EC2_USER }}
+#           key: ${{ secrets.EC2_SSH_KEY }}
+#           script: |
+#             set -e
 
-      - name: SSH and Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
+#             echo "🛠️ Deploying to EC2..."
 
-            echo "🛠️ Deploying to EC2..."
+#             if [ ! -d "/mnt/data/tech_tima/.git" ]; then
+#               echo "📥 Cloning repository..."
+#               git clone https://github.com/kiptootitus/tech_tima.git /mnt/data/tech_tima
+#             else
+#               echo "🔄 Pulling latest changes..."
+#               cd /mnt/data/tech_tima
+#               git pull origin main
+#             fi
 
-            if [ ! -d "/mnt/data/tech_tima/.git" ]; then
-              echo "📥 Cloning repository..."
-              git clone https://github.com/kiptootitus/tech_tima.git /mnt/data/tech_tima
-            else
-              echo "🔄 Pulling latest changes..."
-              cd /mnt/data/tech_tima
-              git pull origin main
-            fi
+#             cd /mnt/data/tech_tima
 
-            cd /mnt/data/tech_tima
+#             echo "🧹 Cleaning old containers..."
+#             docker-compose down || true
 
-            echo "🧹 Cleaning old containers..."
-            docker-compose down || true
+#             echo "🛠️ Building new docker images with no cache..."
+#             docker-compose --env-file .env build --no-cache
 
-            echo "🛠️ Building new docker images with no cache..."
-            docker-compose --env-file .env build --no-cache
+#             echo "🚀 Starting containers..."
+#             docker-compose --env-file .env up -d
 
-            echo "🚀 Starting containers..."
-            docker-compose --env-file .env up -d
-
-            echo "✅ Deployment completed successfully!"
+#             echo "✅ Deployment completed successfully!"
