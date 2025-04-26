@@ -21,13 +21,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # If the repo is not cloned yet, clone it, else pull latest
-            if [ ! -d "/home/ubuntu/tech_tima" ]; then
-              git clone https://github.com/kiptootitus/tech_tima.git /home/ubuntu/tech_tima
+            if [ ! -d "/mnt/data/tech_tima" ]; then
+              git clone https://github.com/kiptootitus/tech_tima.git /mnt/data/tech_tima
             else
-              cd /home/ubuntu/tech_tima
+              cd /mnt/data/tech_tima
               git pull origin main
             fi
 
-            cd /home/ubuntu/tech_tima
+            cd /mnt/data/tech_tima
             docker-compose down || true
             docker-compose --env-file .env up --build -d
