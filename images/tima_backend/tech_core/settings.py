@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "drf_yasg",  # Swagger/OpenAPI UI
 
     # Local
-    "tech_tima.apps.TechTimaConfig",  # Replace with your app name if different
+    "tech_tima.apps.TechTimaConfig", 
 ]
 
 # Middleware
