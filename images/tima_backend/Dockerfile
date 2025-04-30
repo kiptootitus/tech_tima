@@ -54,6 +54,7 @@ COPY --from=builder /install /usr/local
 COPY --from=builder /app /home/app
 
 # Set proper permissions
+COPY --chown=1000:1000 --from=builder /app/entrypoint.sh /app/start-server.sh /app/
 RUN chmod +x /app/entrypoint.sh /app/start-server.sh && \
     sed -i 's/\r$//' /app/entrypoint.sh /app/start-server.sh
 
