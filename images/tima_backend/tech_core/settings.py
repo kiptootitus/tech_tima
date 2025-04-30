@@ -16,10 +16,16 @@ ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", cast=Csv(), default="localhost,12
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv(), default="")
 CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{urlparse(origin).hostname}" for origin in CORS_ALLOWED_ORIGINS if origin.startswith("https://")
-]
+# Handle CSRF Trusted Origins (https only)
+CSRF_TRUSTED_ORIGINS = []
 
+for origin in CORS_ALLOWED_ORIGINS:
+    try:
+        parsed = urlparse(origin)
+        if parsed.scheme == "https" and parsed.hostname:
+            CSRF_TRUSTED_ORIGINS.append(f"https://{parsed.hostname}")
+    except Exception as e:
+        print(f"[WARN] Invalid CORS origin: {origin} - {e}")
 # Installed apps
 INSTALLED_APPS = [
     # Django core
@@ -46,7 +52,7 @@ INSTALLED_APPS = [
     "drf_yasg",  # Swagger/OpenAPI UI
 
     # Local
-    "tech_tima.apps.TechTimaConfig",  # Replace with your app name if different
+    "tech_tima.apps.TechTimaConfig", 
 ]
 
 # Middleware
