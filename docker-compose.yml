@@ -86,10 +86,13 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./images/nginx/nginx-certs:/etc/nginx/nginx-certs
+      - certs:/etc/nginx/nginx-certs
       - ./images/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./images/nginx/proxy_params:/etc/nginx/proxy_params
       - ./images/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/var/www/static
+      - media_volume:/var/www/media
+      - /var/certbot/conf:/etc/letsencrypt/:ro
     depends_on:
       - tima_backend
       - tima_frontend
