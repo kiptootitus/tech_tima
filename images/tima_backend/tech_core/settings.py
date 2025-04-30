@@ -122,6 +122,7 @@ if config("ENVIRONMENT", default="local") == "production":
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_SSL_REDIRECT = True
+    
 
 # Localization
 LANGUAGE_CODE = "en-us"
