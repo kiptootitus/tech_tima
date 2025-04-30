@@ -1,16 +1,24 @@
+# Bytecode / Python junk
 __pycache__/
+*.pyc
 *.pyo
 *.pyd
+*.egg-info
+
+# Databases and SQLite
 *.db
 *.sqlite3
-*.egg-info
+
+# Local static and media (optional)
 static/
 media/
 
-# Don't send local deps (installed in Docker)
-node_modules
+# Dependency directories (we install fresh in Docker)
+node_modules/
 .pnp
 .pnp.*
+
+# Yarn (Yarn 2+/Berry support: keep critical parts only)
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -18,19 +26,21 @@ node_modules
 !.yarn/versions
 !.yarnrc.yml
 
-# Don't include local dev output
-.next
-coverage
-build
+# Output directories (we rebuild inside Docker)
+.next/
+out/
+build/
+coverage/
 
-# System + IDE files
+# IDEs and OS metadata
 .DS_Store
-.vscode
-.idea
+.vscode/
+.idea/
 
+# Logs and debug
 npm-debug.log*
 yarn-debug.log*
 .pnpm-debug.log*
 
-# Environment files
+# Environment files (optional, may want to include some in dev)
 .env*
