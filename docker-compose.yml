@@ -25,7 +25,7 @@ services:
     depends_on:
       - database
     env_file:
-      - .env
+      - .env.production
     volumes:
       - ./images/tima_backend:/home/app/web
       - static_volume:/home/app/web/static
@@ -53,7 +53,7 @@ services:
     image: tima_frontend
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.production
     depends_on:
       - tima_backend
     volumes:
