@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
-import styles from '..auth.module.css';
+import styles from '../auth.module.css';
 import { useAuth } from '@/context/AuthContext';
 
 interface Profile {
@@ -106,6 +106,7 @@ export default function ProfilePage() {
       <label>Birth Date</label>
       <input
         type="date"
+        title='Birth Date'
         name="birth_date"
         value={formData.birth_date ? formData.birth_date.split('T')[0] : ''}
         onChange={handleChange}
@@ -115,6 +116,7 @@ export default function ProfilePage() {
       <label>Website</label>
       <input
         type="url"
+        title='Website'
         name="website"
         value={formData.website || ''}
         onChange={handleChange}

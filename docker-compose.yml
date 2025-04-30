@@ -59,7 +59,7 @@ services:
       - "3000:3000"
     volumes:
       - ./images/tima_frontend/public:/home/app/web/public
-      - ./images/tima_frontend/src:/home/app/web/src
+      - ./images/tima_frontend/app:/home/app/web/app
       - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
       - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
       - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json

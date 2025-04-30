@@ -21,7 +21,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <header className="header">
+        <nav className="nav-container">
         <nav style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <ul style={{ display: 'flex', gap: '15px', margin: 0, padding: 0, listStyle: 'none' }}>
             <li><Link href="/">Home</Link></li>
@@ -53,7 +53,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           </ul>
           <ThemeToggle />
         </nav>
-      </header>
+      </nav>
 
       <main className="container">{children}</main>
       <footer className="footer">© 2025 Tech Tima</footer>
