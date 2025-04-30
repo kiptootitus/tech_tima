@@ -77,24 +77,22 @@ services:
       - internal_local_network
       - default
 
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:latest
-    container_name: nginx-proxy
+  nginx:
+    build:
+      context: ./images/nginx
+    container_name: nginx
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - /etc/nginx/conf.d
-    labels:
-    - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
-    - "VIRTUAL_HOST=cybelimited.com"
-    - "LETSENCRYPT_HOST=cybelimited.com"
-
+      - ./images/nginx/nginx-certs:/etc/nginx/nginx-certs
+      - ./images/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./images/nginx/proxy_params:/etc/nginx/proxy_params
+      - ./images/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - tima_backend
+      - tima_frontend
     networks:
       - internal_local_network
       - default
