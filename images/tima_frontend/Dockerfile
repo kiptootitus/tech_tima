@@ -15,6 +15,8 @@
   # Use node_modules linker and install deps
   RUN yarn config set nodeLinker node-modules
   RUN yarn install --immutable
+  RUN yarn build || (echo "Build failed" && exit 1)
+
   
   # Copy rest of the application code
   COPY . .
