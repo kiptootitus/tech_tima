@@ -90,11 +90,10 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
     labels:
-      - com.github.nginx-proxy.nginx-proxy=true  # ✅ This is the fix!
+      - com.github.nginx-proxy.nginx  # Corrected label
     networks:
       - internal_local_network
       - default
-
 
   nginx-proxy-acme:
     image: nginxproxy/acme-companion
@@ -103,11 +102,14 @@ services:
       - nginx-proxy
     environment:
       - DEFAULT_EMAIL=${LETSENCRYPT_EMAIL}
+    volumes_from:
+      - nginx-proxy  # Added for explicit volume mounting
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
+      - acme:/etc/acme.sh  # Added for acme.sh storage
     networks:
       - internal_local_network
       - default
@@ -120,6 +122,7 @@ volumes:
   certs:
   vhost:
   html:
+  acme:
 
 networks:
   default:
