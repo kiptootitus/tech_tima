@@ -19,15 +19,11 @@ node_modules/
 .pnp.*
 
 # Yarn (Yarn 2+/Berry support)
-# ⚠️ DO NOT ignore entire .yarn directory
+.yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-.yarn/cache
-.yarn/install-state.gz
-
-# Yarn config file
 !.yarnrc.yml
 
 # Output directories (we rebuild inside Docker)

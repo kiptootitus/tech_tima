@@ -63,10 +63,16 @@ services:
       - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
       - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
       - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json
+      - ./images/tima_frontend/.yarn:/home/app/web/.yarn
+      - ./images/tima_frontend/.yarnrc.yml:/home/app/web/.yarnrc.yml
+      - ./images/tima_frontend/package.json:/home/app/web/package.json
+      - ./images/tima_frontend/yarn.lock:/home/app/web/yarn.lock
       - /var/www/static:/var/www/static
       - /var/certbot/conf:/etc/letsencrypt/:ro
     depends_on:
       - tima_backend
+    stdin_open: true
+    tty: true
     environment:
       - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
       - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
@@ -74,6 +80,7 @@ services:
     networks:
       - internal_local_network
       - default
+
   nginx-proxy:
     image: nginxproxy/nginx-proxy:latest
     container_name: nginx-proxy
