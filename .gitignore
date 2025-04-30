@@ -35,3 +35,4 @@ garage-tf/modules/security_group/main.tf
 garage-tf/modules/ec2_instance/variables.tf
 garage-tf/modules/security_group/variables.tf
 garage-tf/.terraform/modules/modules.json
+.github/workflows/deploy.yml

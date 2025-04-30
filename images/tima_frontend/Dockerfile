@@ -9,7 +9,7 @@
   
   # Copy only package metadata and yarn config first
   COPY package.json yarn.lock ./
-  COPY .yarn .yarn
+  # COPY .yarn .yarn
   COPY .yarnrc.yml .yarnrc.yml
   
   # Use node_modules linker and install deps
@@ -43,7 +43,7 @@
   
   # Copy only what’s needed for runtime
   COPY --from=builder /home/app/web/package.json /home/app/web/yarn.lock ./
-  COPY --from=builder /home/app/web/.yarn .yarn
+  # COPY --from=builder /home/app/web/.yarn .yarn
   COPY --from=builder /home/app/web/.yarnrc.yml .yarnrc.yml
   COPY --from=builder /home/app/web/public ./public
   COPY --from=builder /home/app/web/src ./src
