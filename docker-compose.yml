@@ -84,17 +84,17 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    labels:
-      - com.github.nginx-proxy.nginx-proxy
-
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
+    labels:
+      - com.github.nginx-proxy.nginx-proxy=true  # ✅ This is the fix!
     networks:
       - internal_local_network
       - default
+
 
   nginx-proxy-acme:
     image: nginxproxy/acme-companion
