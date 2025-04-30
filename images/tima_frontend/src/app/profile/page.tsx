@@ -37,13 +37,16 @@ export default function ProfilePage() {
 
   function handleAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({
-      ...prev,
-      address: {
-        ...prev.address,
-        [name]: value,
-      },
-    }));
+
+    setFormData((prev: any) => {
+        return ({
+            ...prev,
+            address: {
+                ...prev.address,
+                [name]: value,
+            },
+        });
+    });
   }
 
   async function handleSave() {

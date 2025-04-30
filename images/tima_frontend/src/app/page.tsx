@@ -27,10 +27,12 @@ export default function HomePage() {
 
       <section className={styles.visuals}>
         <div className={styles.block + ' ' + styles.slideInLeft}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://placehold.co/300x200" alt="placeholder" />
           <p>Modular Frontend Architecture</p>
         </div>
         <div className={styles.block + ' ' + styles.slideInRight}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://placehold.co/300x200" alt="placeholder" />
           <p>Modern API Integration</p>
         </div>

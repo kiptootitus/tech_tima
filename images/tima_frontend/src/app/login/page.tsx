@@ -50,6 +50,7 @@ export default function LoginPage() {
       setUser(profileRes.data);
 
       router.push('/profile');
+
     } catch (err: any) {
       console.error('Login failed:', err);
       setErrors({ general: 'Invalid username or password.' });
