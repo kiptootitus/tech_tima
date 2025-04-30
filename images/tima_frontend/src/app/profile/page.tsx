@@ -3,12 +3,39 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
+import styles from '..auth.module.css';
 import { useAuth } from '@/context/AuthContext';
+
+interface Profile {
+  id: number;
+  bio: string;
+  birth_date: string;
+  website: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    postal_code: string;
+  };
+}
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
-  const [profile, setProfile] = useState<any>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [formData, setFormData] = useState<Profile>({
+    id: 0,
+    bio: '',
+    birth_date: '',
+    website: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      country: '',
+      postal_code: '',
+    },
+  });
   const [editing, setEditing] = useState(false);
   const router = useRouter();
 
@@ -32,25 +59,22 @@ export default function ProfilePage() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-
-    setFormData((prev: any) => {
-        return ({
-            ...prev,
-            address: {
-                ...prev.address,
-                [name]: value,
-            },
-        });
-    });
+    setFormData((prev) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [name]: value,
+      },
+    }));
   }
 
   async function handleSave() {
-    if (!profile?.id) return alert("Profile ID missing");
+    if (!profile?.id) return alert('Profile ID missing');
 
     try {
       const res = await api.put(`/profiles/${profile.id}/`, formData);
@@ -72,6 +96,8 @@ export default function ProfilePage() {
       <label>Bio</label>
       <textarea
         name="bio"
+        title="Bio"
+        placeholder="Enter your bio"
         value={formData.bio || ''}
         onChange={handleChange}
         disabled={!editing}
@@ -81,7 +107,7 @@ export default function ProfilePage() {
       <input
         type="date"
         name="birth_date"
-        value={formData.birth_date || ''}
+        value={formData.birth_date ? formData.birth_date.split('T')[0] : ''}
         onChange={handleChange}
         disabled={!editing}
       />
@@ -132,12 +158,14 @@ export default function ProfilePage() {
         disabled={!editing}
       />
 
-      <div style={{ marginTop: '1rem' }}>
-        {editing ? (
-          <button onClick={handleSave}>Save</button>
-        ) : (
-          <button onClick={() => setEditing(true)}>Edit</button>
-        )}
+      <div className={styles.container}>
+        <div style={{ marginTop: '1rem' }}>
+          {editing ? (
+            <button onClick={handleSave}>Save</button>
+          ) : (
+            <button onClick={() => setEditing(true)}>Edit</button>
+          )}
+        </div>
       </div>
     </div>
   );
