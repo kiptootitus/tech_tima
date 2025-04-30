@@ -7,24 +7,17 @@
   # Enable and prepare Yarn 4
   RUN corepack enable && corepack prepare yarn@4.9.1 --activate
   
-  # Copy only package metadata and yarn config first
-  COPY package.json yarn.lock ./
-  # COPY .yarn .yarn
-  COPY .yarnrc.yml .yarnrc.yml
+  # Copy all application code first
+  COPY . .
   
-  # Use node_modules linker and install deps
+  # Install dependencies and build
   RUN yarn config set nodeLinker node-modules
   RUN yarn install --immutable
   RUN yarn build || (echo "Build failed" && exit 1)
-
-  
-  # Copy rest of the application code
-  COPY . .
   
   # Build app if ENVIRONMENT=production
   ARG ENVIRONMENT=local
   RUN if [ "$ENVIRONMENT" = "production" ]; then NEXT_DISABLE_ESLINT=true yarn build; else echo "Development mode - skipping yarn build"; fi
-  
   # ------------------------
   # Runtime stage
   # ------------------------
