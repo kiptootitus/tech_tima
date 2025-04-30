@@ -1,6 +1,5 @@
-
 from datetime import timedelta
-
+from urllib.parse import urlparse
 from pathlib import Path
 import os
 from decouple import AutoConfig, Csv
@@ -11,11 +10,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 config = AutoConfig()
 
 # Security
-SECRET_KEY = config("DJANGO_SECRET_KEY")
-DEBUG = config("DEBUG", cast=bool)
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", cast=Csv())
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="unsafe-dev-key")
+DEBUG = config("DEBUG", cast=bool, default=False)
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", cast=Csv(), default="localhost,127.0.0.1,0.0.0.0")
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv(), default="")
+CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{urlparse(origin).hostname}" for origin in CORS_ALLOWED_ORIGINS if origin.startswith("https://")
+]
 
 # Installed apps
 INSTALLED_APPS = [
@@ -43,9 +46,10 @@ INSTALLED_APPS = [
     "drf_yasg",  # Swagger/OpenAPI UI
 
     # Local
-    "tech_tima.apps.TechTimaConfig",  # Replace with your app if different
+    "tech_tima.apps.TechTimaConfig",  # Replace with your app name if different
 ]
 
+# Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -56,11 +60,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "tech_core.urls"
 
+# Templates
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -78,19 +82,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "tech_core.wsgi.application"
+
 AUTHENTICATION_BACKENDS = [
-    # ...
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
-    # ...
 ]
-# PostgreSQL DATABASE
 
+# PostgreSQL DATABASE
 DATABASES = {
-    "default": {  # <-- must be "default"
+    "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
@@ -100,6 +100,7 @@ DATABASES = {
     }
 }
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -107,22 +108,34 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# Production-only secure cookie settings
+if config("ENVIRONMENT", default="local") == "production":
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = True
+
+# Localization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-ALLAUTH_UI_THEME = "light"
+
+# Frontend integration
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
+
+# Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-# Ensure staticfiles directory exists
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
-
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -144,8 +157,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-# JWT settings
-
+# JWT Authentication
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -154,6 +166,8 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
+
+# Email config
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -161,8 +175,22 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 SERVER_EMAIL = EMAIL_HOST_USER
 
 # CORS
 CORS_ALLOW_CREDENTIALS = True
+
+# Logging (Optional but recommended)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG" if DEBUG else "INFO",
+    },
+}

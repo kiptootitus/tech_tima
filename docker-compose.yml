@@ -2,7 +2,8 @@ version: '3.9'
 
 services:
   database:
-    image: postgres:16.8-alpine
+    image: postgres:16.1-alpine
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - ./images/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
@@ -10,7 +11,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
     networks:
       - internal_local_network
       - default
@@ -21,18 +21,17 @@ services:
       dockerfile: Dockerfile
     container_name: tima_backend
     image: tima_backend
+    restart: unless-stopped
     depends_on:
       - database
     env_file:
       - .env
     volumes:
       - ./images/tima_backend:/home/app/web
-      - /var/www/static:/var/www/static
-      - /var/certbot/conf:/etc/letsencrypt/:ro
       - static_volume:/home/app/web/static
       - media_volume:/home/app/web/media
-    ports:
-      - "8000:8000"
+      - /var/www/static:/var/www/static
+      - /var/certbot/conf:/etc/letsencrypt/:ro
     environment:
       - VIRTUAL_HOST=${API_VIRTUAL_HOST}
       - VIRTUAL_PORT=${API_VIRTUAL_PORT}
@@ -44,7 +43,6 @@ services:
       - internal_local_network
       - default
 
-
   tima_frontend:
     build:
       context: ./images/tima_frontend
@@ -53,30 +51,28 @@ services:
         ENVIRONMENT: local  # or production
     container_name: tima_frontend
     image: tima_frontend
+    restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "3000:3000"
+    depends_on:
+      - tima_backend
     volumes:
       - ./images/tima_frontend/public:/home/app/web/public
       - ./images/tima_frontend/app:/home/app/web/app
       - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
       - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
       - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json
-      # - ./images/tima_frontend/.yarn:/home/app/web/.yarn
       - ./images/tima_frontend/.yarnrc.yml:/home/app/web/.yarnrc.yml
       - ./images/tima_frontend/package.json:/home/app/web/package.json
       - ./images/tima_frontend/yarn.lock:/home/app/web/yarn.lock
       - /var/www/static:/var/www/static
       - /var/certbot/conf:/etc/letsencrypt/:ro
-    depends_on:
-      - tima_backend
-    stdin_open: true
-    tty: true
     environment:
       - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
       - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    stdin_open: true
+    tty: true
     networks:
       - internal_local_network
       - default
@@ -105,7 +101,6 @@ volumes:
   certs:
   vhost:
   html:
-
 
 networks:
   default:
