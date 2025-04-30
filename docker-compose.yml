@@ -90,6 +90,11 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /etc/nginx/conf.d
+    labels:
+    - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+    - "VIRTUAL_HOST=cybelimited.com"
+    - "LETSENCRYPT_HOST=cybelimited.com"
+
     networks:
       - internal_local_network
       - default
