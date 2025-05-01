@@ -124,13 +124,16 @@ services:
     container_name: jenkins
     env_file:
       - .env
+    environment:
+      - JAVA_OPTS=
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - ./plugins.txt:/usr/share/jenkins/ref/plugins.txt
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
+
     restart: unless-stopped
 
 volumes:
