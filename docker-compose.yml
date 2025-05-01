@@ -25,7 +25,7 @@ services:
     depends_on:
       - database
     env_file:
-      - .env.production
+      - .env
     volumes:
       - ./images/tima_backend:/home/app/web
       - static_volume:/home/app/web/static
@@ -53,12 +53,13 @@ services:
     image: tima_frontend
     restart: unless-stopped
     env_file:
-      - .env.production
+      - .env
     depends_on:
       - tima_backend
     volumes:
-      - ./images/tima_frontend/public:/home/app/web/public
       - ./images/tima_frontend/app:/home/app/web/app
+      - ./images/tima_frontend/src:/home/app/web/src
+      - ./images/tima_frontend/public:/home/app/web/public
       - ./images/tima_frontend/next.config.js:/home/app/web/next.config.js
       - ./images/tima_frontend/tailwind.config.ts:/home/app/web/tailwind.config.ts
       - ./images/tima_frontend/tsconfig.json:/home/app/web/tsconfig.json
@@ -67,10 +68,12 @@ services:
       - ./images/tima_frontend/yarn.lock:/home/app/web/yarn.lock
       - /var/www/static:/var/www/static
       - /var/certbot/conf:/etc/letsencrypt/:ro
+
     environment:
       - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
       - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+      - CHOKIDAR_USEPOLLING=true
     stdin_open: true
     tty: true
     networks:
@@ -113,7 +116,25 @@ services:
     networks:
       - internal_local_network
       - default
+  jenkins:
+    build:
+      context: ./images/jenkins
+      args:
+        DOCKER_GID: ${DOCKER_GID}
+    container_name: jenkins
+    env_file:
+      - .env
+    environment:
+      - JAVA_OPTS=
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
 
+    restart: unless-stopped
 
 volumes:
   postgres_data:
@@ -123,6 +144,8 @@ volumes:
   vhost:
   html:
   acme:
+  jenkins_home:
+
 
 networks:
   default:
