@@ -116,14 +116,15 @@ services:
     networks:
       - internal_local_network
       - default
-  jenkins:
+  custom_jenkins:
     build:
       context: ./images/jenkins
       dockerfile: Dockerfile
       args:
-        DOCKER_GID: 984
-    container_name: jenkins
-    image: jenkins
+        ENVIRONMENT: local
+        DOCKER_GID: ${DOCKER_GID:-984}  # Use env variable or default to 984
+    container_name: custom_jenkins
+    image: custom_jenkins
     env_file:
       - .env
     ports:
@@ -131,21 +132,20 @@ services:
       - "50000:50000"      # Jenkins agent (JNLP)
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-
-      # These two lines are now handled by Dockerfile COPY — you don't need to bind mount them
-      # unless you're actively developing/changing them live:
-      # - ./images/jenkins/init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
-      # - ./images/jenkins/plugins.txt:/usr/share/jenkins/ref/plugins.txt
-
-    restart: unless-stopped
-
-    # Optional: Healthcheck
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
+      - internal_local_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/login"]
       interval: 30s
-      timeout: 10s
-      retries: 5
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2g
 
 
 volumes:
@@ -163,3 +163,4 @@ networks:
   default:
   internal_local_network:
     driver: bridge
+    internal: true
