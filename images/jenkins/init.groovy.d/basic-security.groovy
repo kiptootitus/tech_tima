@@ -1,7 +1,6 @@
 import jenkins.model.*
 import hudson.security.*
 import hudson.security.ProjectMatrixAuthorizationStrategy
-
 def instance = Jenkins.getInstance()
 
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)

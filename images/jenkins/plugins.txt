@@ -10,3 +10,4 @@ credentials-binding
 ansicolor
 pipeline-utility-steps
 github-branch-source
+matrix-auth
