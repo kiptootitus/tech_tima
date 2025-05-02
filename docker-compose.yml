@@ -119,22 +119,34 @@ services:
   jenkins:
     build:
       context: ./images/jenkins
+      dockerfile: Dockerfile
       args:
-        DOCKER_GID: ${DOCKER_GID}
+        DOCKER_GID: 984
     container_name: jenkins
+    image: jenkins
     env_file:
       - .env
-    environment:
-      - JAVA_OPTS=
     ports:
-      - "8080:8080"
-      - "50000:50000"
+      - "8080:8080"        # Jenkins web UI
+      - "50000:50000"      # Jenkins agent (JNLP)
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
+
+      # These two lines are now handled by Dockerfile COPY — you don't need to bind mount them
+      # unless you're actively developing/changing them live:
+      # - ./images/jenkins/init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
+      # - ./images/jenkins/plugins.txt:/usr/share/jenkins/ref/plugins.txt
 
     restart: unless-stopped
+
+    # Optional: Healthcheck
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 
 volumes:
   postgres_data:
